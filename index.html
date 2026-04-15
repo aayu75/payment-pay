@@ -19,9 +19,6 @@
       text-align: center;
       box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     }
-    h2 {
-      margin-bottom: 15px;
-    }
     input, select {
       width: 100%;
       padding: 10px;
@@ -52,14 +49,16 @@
       font-size: 16px;
     }
     .qr {
-      margin-top: 10px;
-      display: none;
+      margin-top: 15px;
+    }
+    img {
+      border-radius: 10px;
     }
   </style>
 </head>
 <body>
 
-<div class="card" id="mainCard">
+<div class="card">
   <h2>UPI Payment</h2>
 
   <div class="amount-btns">
@@ -81,19 +80,18 @@
 
   <button class="pay-btn" onclick="pay()">Pay Now</button>
 
-  <div class="qr" id="qrBox">
+  <div class="qr">
     <p>Or scan QR:</p>
-    <img id="qrImg" width="200">
+    <img src="your-qr.png" width="200">
+    <p><b>UPI ID:</b> ayushkumar7832@okaxis</p>
   </div>
 </div>
 
 <script>
 function setAmount(val, btn) {
   document.getElementById("amount").value = val;
-
   document.querySelectorAll(".amount-btns button")
     .forEach(b => b.classList.remove("active"));
-
   btn.classList.add("active");
 }
 
@@ -126,20 +124,19 @@ function pay() {
   }
 
   let note = `Payment from ${name}`;
-  let upi = `upi://pay?pa=yourupi@bank&pn=Ayush&am=${amt}&cu=INR&tn=${encodeURIComponent(note)}`;
 
-  // Open UPI app
+  let upi = `upi://pay?pa=ayushkumar7832@okaxis&pn=Ayush&am=${amt}&cu=INR&tn=${encodeURIComponent(note)}`;
+
+ 
+
+  // 🔹 Open UPI app
   window.location.href = upi;
 
-  // Show QR fallback
-  let qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upi)}`;
-  document.getElementById("qrImg").src = qr;
-  document.getElementById("qrBox").style.display = "block";
-
-  // Success alert
+  // 🔹 WhatsApp confirmation
   setTimeout(() => {
-    alert("After payment, please confirm on WhatsApp ✅");
-  }, 2000);
+    let msg = `Hi, I have paid ₹${amt} (${name})`;
+    window.open(`https://wa.me/919971294683?text=${encodeURIComponent(msg)}`);
+  }, 3000);
 }
 </script>
 
