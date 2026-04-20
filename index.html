@@ -2,6 +2,8 @@
 <html>
 <head>
   <title>UPI Payment</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
   <style>
     body {
       font-family: Arial;
@@ -10,7 +12,9 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+      margin: 0;
     }
+
     .card {
       background: white;
       padding: 25px;
@@ -19,6 +23,7 @@
       text-align: center;
       box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     }
+
     input, select {
       width: 100%;
       padding: 10px;
@@ -26,6 +31,7 @@
       border-radius: 8px;
       border: 1px solid #ccc;
     }
+
     .amount-btns button {
       margin: 5px;
       padding: 8px 12px;
@@ -34,10 +40,12 @@
       cursor: pointer;
       background: #eee;
     }
+
     .amount-btns button.active {
       background: #667eea;
       color: white;
     }
+
     .pay-btn {
       width: 100%;
       padding: 12px;
@@ -48,14 +56,22 @@
       cursor: pointer;
       font-size: 16px;
     }
+
+    .pay-btn:hover {
+      background: #218838;
+    }
+
     .qr {
       margin-top: 15px;
     }
+
     img {
       border-radius: 10px;
+      max-width: 100%;
     }
   </style>
 </head>
+
 <body>
 
 <div class="card">
@@ -90,21 +106,30 @@
 <script>
 function setAmount(val, btn) {
   document.getElementById("amount").value = val;
+
   document.querySelectorAll(".amount-btns button")
     .forEach(b => b.classList.remove("active"));
+
   btn.classList.add("active");
 }
 
 function checkOther() {
   let person = document.getElementById("person").value;
+
   document.getElementById("otherName").style.display =
     person === "Other" ? "block" : "none";
 }
 
 function pay() {
-  let amt = document.getElementById("amount").value;
+  let amt = parseFloat(document.getElementById("amount").value);
   let person = document.getElementById("person").value;
   let other = document.getElementById("otherName").value;
+
+  // Validation
+  if (!amt) {
+    alert("Enter amount");
+    return;
+  }
 
   if (amt < 500 || amt > 1000) {
     alert("Enter ₹500–₹1000");
@@ -116,26 +141,25 @@ function pay() {
     return;
   }
 
-  let name = person === "Other" ? other : person;
-
   if (person === "Other" && !other) {
     alert("Enter name");
     return;
   }
 
+  let name = person === "Other" ? other : person;
   let note = `Payment from ${name}`;
 
   let upi = `upi://pay?pa=ayushkumar7832-1@okaxis&pn=Ayush&am=${amt}&cu=INR&tn=${encodeURIComponent(note)}`;
 
- 
-
-  // 🔹 Open UPI app
+  // Open UPI app
   window.location.href = upi;
 
-  // 🔹 WhatsApp confirmation
+  // Ask before WhatsApp
   setTimeout(() => {
-    let msg = `Hi, I have paid ₹${amt} (${name})`;
-    window.open(`https://wa.me/919971294683?text=${encodeURIComponent(msg)}`);
+    if (confirm("Did you complete the payment?")) {
+      let msg = `Hi, I have paid ₹${amt} (${name})`;
+      window.open(`https://wa.me/919971294683?text=${encodeURIComponent(msg)}`);
+    }
   }, 3000);
 }
 </script>
